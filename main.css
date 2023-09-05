@@ -1,0 +1,55 @@
+body.image-resizer {
+  /* variables */
+  /* width */
+  /* position */
+}
+body.image-resizer div[alt~="half"],
+body.image-resizer span[alt~="half"],
+body.image-resizer div[alt~="1/2"],
+body.image-resizer span[alt~="1/2"],
+body.image-resizer div[alt~="2/3"],
+body.image-resizer span[alt~="2/3"],
+body.image-resizer div[alt~="3/5"],
+body.image-resizer span[alt~="3/5"],
+body.image-resizer div[alt~="4/5"],
+body.image-resizer span[alt~="4/5"],
+body.image-resizer div[alt~="5/6"],
+body.image-resizer span[alt~="5/6"] {
+  text-align: center;
+}
+body.image-resizer div[alt~="half"] img,
+body.image-resizer span[alt~="half"] img {
+  width: 50% !important;
+}
+body.image-resizer div[alt~="1/2"] img,
+body.image-resizer span[alt~="1/2"] img {
+  width: 50% !important;
+}
+body.image-resizer div[alt~="2/3"] img,
+body.image-resizer span[alt~="2/3"] img {
+  width: 66.66666667% !important;
+}
+body.image-resizer div[alt~="3/5"] img,
+body.image-resizer span[alt~="3/5"] img {
+  width: 60% !important;
+}
+body.image-resizer div[alt~="4/5"] img,
+body.image-resizer span[alt~="4/5"] img {
+  width: 80% !important;
+}
+body.image-resizer div[alt~="5/6"] img,
+body.image-resizer span[alt~="5/6"] img {
+  width: 83.33333333% !important;
+}
+body.image-resizer div[alt~="center"]:has(> img),
+body.image-resizer span[alt~="center"]:has(> img) {
+  text-align: center;
+}
+body.image-resizer div[alt~="left"]:has(> img),
+body.image-resizer span[alt~="left"]:has(> img) {
+  text-align: left;
+}
+body.image-resizer div[alt~="right"]:has(> img),
+body.image-resizer span[alt~="right"]:has(> img) {
+  text-align: right;
+}
