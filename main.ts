@@ -9,6 +9,15 @@ import {
 	Setting,
 } from "obsidian";
 
+import {
+	ViewUpdate,
+	PluginValue,
+	EditorView,
+	ViewPlugin,
+} from "@codemirror/view";
+
+import { debounce, collectSizeArbitraryValues } from "./helpers";
+
 interface MyPluginSettings {
 	mySetting: string;
 }
@@ -37,62 +46,8 @@ export default class MyPlugin extends Plugin {
 		}
 
 		el.innerHTML = `
-		body.image-resizer {
-			/* variables */
-			/* width */
-			/* position */
-		}
-		body.image-resizer div[alt~="half"],
-		body.image-resizer span[alt~="half"],
-		body.image-resizer div[alt~="1/2"],
-		body.image-resizer span[alt~="1/2"],
-		body.image-resizer div[alt~="2/3"],
-		body.image-resizer span[alt~="2/3"],
-		body.image-resizer div[alt~="3/5"],
-		body.image-resizer span[alt~="3/5"],
-		body.image-resizer div[alt~="4/5"],
-		body.image-resizer span[alt~="4/5"],
-		body.image-resizer div[alt~="5/6"],
-		body.image-resizer span[alt~="5/6"] {
-			text-align: center;
-		}
-		body.image-resizer div[alt~="half"] img,
-		body.image-resizer span[alt~="half"] img {
-			width: 50% !important;
-		}
-		body.image-resizer div[alt~="1/2"] img,
-		body.image-resizer span[alt~="1/2"] img {
-			width: 50% !important;
-		}
-		body.image-resizer div[alt~="2/3"] img,
-		body.image-resizer span[alt~="2/3"] img {
-			width: 66.66666667% !important;
-		}
-		body.image-resizer div[alt~="3/5"] img,
-		body.image-resizer span[alt~="3/5"] img {
-			width: 60% !important;
-		}
-		body.image-resizer div[alt~="4/5"] img,
-		body.image-resizer span[alt~="4/5"] img {
-			width: 80% !important;
-		}
-		body.image-resizer div[alt~="5/6"] img,
-		body.image-resizer span[alt~="5/6"] img {
-			width: 83.33333333% !important;
-		}
-		body.image-resizer div[alt~="center"]:has(> img),
-		body.image-resizer span[alt~="center"]:has(> img) {
-			text-align: center;
-		}
-		body.image-resizer div[alt~="left"]:has(> img),
-		body.image-resizer span[alt~="left"]:has(> img) {
-			text-align: left;
-		}
-		body.image-resizer div[alt~="right"]:has(> img),
-		body.image-resizer span[alt~="right"]:has(> img) {
-			text-align: right;
-		}
-		
+	body.image-resizer .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer>.cm-content,body.image-resizer .markdown-preview-view.is-readable-line-width .markdown-preview-sizer{--image-resizer-containar-width:100%;--image-resizer-max-width:100%;--image-resizer-position:center;--image-resizer-border-radius:0}body.image-resizer .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer>.cm-content>.image-embed,body.image-resizer .markdown-preview-view.is-readable-line-width .markdown-preview-sizer>.image-embed,body.image-resizer .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer>.cm-content>div:has(.image-embed),body.image-resizer .markdown-preview-view.is-readable-line-width .markdown-preview-sizer>div:has(.image-embed){text-align:var(--image-resizer-position, 'center')}body.image-resizer .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer>.cm-content>.image-embed img,body.image-resizer .markdown-preview-view.is-readable-line-width .markdown-preview-sizer>.image-embed img,body.image-resizer .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer>.cm-content>div:has(.image-embed) img,body.image-resizer .markdown-preview-view.is-readable-line-width .markdown-preview-sizer>div:has(.image-embed) img{max-width:var(--image-resizer-max-width, '100%');border-radius:var(--image-resizer-border-radius, '0px')}body.image-resizer .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer>.cm-content>div[alt~="full"],body.image-resizer .markdown-preview-view.is-readable-line-width .markdown-preview-sizer>div[alt~="full"]{width:100%;max-width:100%;--image-resizer-max-width:100%}body.image-resizer .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer>.cm-content>div[alt~="wide"],body.image-resizer .markdown-preview-view.is-readable-line-width .markdown-preview-sizer>div[alt~="wide"]{width:88%;max-width:88%;--image-resizer-max-width:100%}body.image-resizer .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer>.cm-content>div[alt~="fit"],body.image-resizer .markdown-preview-view.is-readable-line-width .markdown-preview-sizer>div[alt~="fit"]{--image-resizer-max-width:80%}body.image-resizer .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer>.cm-content>div[alt~="half"],body.image-resizer .markdown-preview-view.is-readable-line-width .markdown-preview-sizer>div[alt~="half"]{--image-resizer-max-width:50%}body.image-resizer .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer>.cm-content>div[alt~="1/2"],body.image-resizer .markdown-preview-view.is-readable-line-width .markdown-preview-sizer>div[alt~="1/2"]{--image-resizer-max-width:50%}body.image-resizer .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer>.cm-content>div[alt~="2/3"],body.image-resizer .markdown-preview-view.is-readable-line-width .markdown-preview-sizer>div[alt~="2/3"]{--image-resizer-max-width:width: 66.66666666666667%}body.image-resizer .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer>.cm-content>div[alt~="3/5"],body.image-resizer .markdown-preview-view.is-readable-line-width .markdown-preview-sizer>div[alt~="3/5"]{--image-resizer-max-width:60%}body.image-resizer .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer>.cm-content>div[alt~="4/5"],body.image-resizer .markdown-preview-view.is-readable-line-width .markdown-preview-sizer>div[alt~="4/5"]{--image-resizer-max-width:80%}body.image-resizer .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer>.cm-content>div[alt~="5/6"],body.image-resizer .markdown-preview-view.is-readable-line-width .markdown-preview-sizer>div[alt~="5/6"]{--image-resizer-max-width:83.33333333%}body.image-resizer .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer>.cm-content>div[alt~="center"],body.image-resizer .markdown-preview-view.is-readable-line-width .markdown-preview-sizer>div[alt~="center"]{--image-resizer-position:center}body.image-resizer .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer>.cm-content>div[alt~="left"],body.image-resizer .markdown-preview-view.is-readable-line-width .markdown-preview-sizer>div[alt~="left"]{--image-resizer-position:left}body.image-resizer .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer>.cm-content>div[alt~="right"],body.image-resizer .markdown-preview-view.is-readable-line-width .markdown-preview-sizer>div[alt~="right"]{--image-resizer-position:right}body.image-resizer .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer>.cm-content>div[alt~="rounded"],body.image-resizer .markdown-preview-view.is-readable-line-width .markdown-preview-sizer>div[alt~="rounded"]{--image-resizer-border-radius:10px}body.image-resizer .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer>.cm-content>div[alt~="rounded-full"],body.image-resizer .markdown-preview-view.is-readable-line-width .markdown-preview-sizer>div[alt~="rounded-full"]{--image-resizer-border-radius:9999px}body:not(.zoom-off) .view-content .image-embed:not(.canvas-node-content):active{width:var(--image-resizer-containar-width, '100%') !important;max-width:var(--image-resizer-containar-width, '100%') !important}body:not(.zoom-off) .view-content .image-embed:not(.canvas-node-content):active img{aspect-ratio:unset;top:50%;z-index:99;transform:translateY(-50%);padding:0;margin:0 auto;width:calc(100% - 20px) !important;max-width:calc(100% - 20px) !important;max-height:95vh;object-fit:contain;left:0;right:0;bottom:0;position:absolute;opacity:1;border-radius:0px !important}
+	
 		`;
 	}
 
@@ -101,6 +56,37 @@ export default class MyPlugin extends Plugin {
 
 		this.addStyle();
 		this.updateStyle();
+
+		const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+
+		console.log("view", view);
+
+		// Make sure the user is editing a Markdown file.
+		// if (view) {
+		// 	const cursor = view.editor.getCursor();
+
+		// 	console.log("cursor", cursor);
+
+		// 	// ...
+		// }
+
+		this.registerEditorExtension([examplePlugin]);
+
+		// this.registerMarkdownPostProcessor((element, context) => {
+		// 	console.log("code------", element);
+		// 	const codeblocks = element.querySelectorAll("code");
+
+		// 	for (let index = 0; index < codeblocks.length; index++) {
+		// 		const codeblock = codeblocks.item(index);
+		// 		const text = codeblock.innerText.trim();
+		// 		const isEmoji =
+		// 			text[0] === ":" && text[text.length - 1] === ":";
+
+		// 		if (isEmoji) {
+		// 			// context.addChild(new Emoji(codeblock, text));
+		// 		}
+		// 	}
+		// });
 
 		// This creates an icon in the left ribbon.
 		// const ribbonIconEl = this.addRibbonIcon(
@@ -183,6 +169,60 @@ export default class MyPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 }
+
+const appendedArbitaryValues: string[] = [];
+
+class ExamplePlugin implements PluginValue {
+	update(update: ViewUpdate) {
+		console.log("udpate", update);
+		const {
+			state: { doc },
+		} = update;
+
+		// @ts-ignore
+		const { text } = doc ?? {};
+
+		console.log("text", text);
+
+		if (!text?.length) {
+			return;
+		}
+
+		debounce(() => {
+			console.log("debounce----bbbbb");
+			const arbitaryValues = collectSizeArbitraryValues(text);
+			console.log("arbitaryValues", arbitaryValues);
+
+			arbitaryValues.forEach((value) => {
+				if (!appendedArbitaryValues.includes(value)) {
+					this.updateStyle(value);
+					appendedArbitaryValues.push(value);
+				}
+			});
+		}, 1000)();
+	}
+
+	updateStyle(width: string) {
+		const el = document.getElementById("image-resizer");
+
+		if (!el) {
+			throw "image resizer element is not found";
+		}
+
+		el.innerHTML =
+			el.innerHTML +
+			`
+			body.image-resizer .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer > .cm-content > div[alt~="w-${width}"],
+			body.image-resizer .markdown-preview-view.is-readable-line-width .markdown-preview-sizer > div[alt~="w-${width}"] {
+				width: 100%;
+				max-width: 100%;
+				--image-resizer-max-width: ${width}px;
+			}
+		`;
+	}
+}
+
+export const examplePlugin = ViewPlugin.fromClass(ExamplePlugin);
 
 class SampleModal extends Modal {
 	constructor(app: App) {
