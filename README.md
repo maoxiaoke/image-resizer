@@ -33,6 +33,8 @@ Those keywords are:
 - `4/5`
 - `5/6`
 
+This plugin of support arbitrary width values follow by `w-`, such as `w-300`. This feature can be turned on in the plugin's settings.
+
 ## Position
 
 - `center`, the default
