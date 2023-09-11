@@ -1,4 +1,4 @@
-import { App, Modal, Plugin, PluginSettingTab, Setting } from "obsidian";
+import { App, Plugin, PluginSettingTab, Setting } from "obsidian";
 
 import { ViewUpdate, PluginValue, ViewPlugin } from "@codemirror/view";
 
@@ -137,7 +137,7 @@ class ImageResizerSetting extends PluginSettingTab {
 		mainDesc.appendChild(
 			createEl("a", {
 				text: "see documentation",
-				href: "https://minimal.guide",
+				href: "https://github.com/maoxiaoke/image-resizer",
 			})
 		);
 		mainDesc.appendText(" or join ");
@@ -149,8 +149,8 @@ class ImageResizerSetting extends PluginSettingTab {
 		mainDesc.appendText(" in the ");
 		mainDesc.appendChild(
 			createEl("a", {
-				text: "Obsidian Discord",
-				href: "https://obsidian.md/community",
+				text: "Obsidian Image Resizer Discord Channel",
+				href: "https://discord.gg/gFZYfTQD",
 			})
 		);
 		mainDesc.appendText(" community.");
