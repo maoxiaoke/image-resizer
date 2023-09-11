@@ -1,4 +1,44 @@
 body.image-resizer {
+
+  --line-width: 40rem;
+  --max-width: 88%;
+
+  --content-margin: auto;
+	--content-margin-start: max(
+		calc(50% - var(--line-width)/2),
+		calc(50% - var(--max-width)/2) );
+	--content-line-width: min(var(--line-width), var(--max-width));
+
+  /* Set overall context to 100% width */
+  .markdown-preview-view .markdown-preview-sizer.markdown-preview-sizer {
+    max-width: 100%;
+    margin-inline: auto;
+    width: 100%;
+  }
+
+  .markdown-source-view.mod-cm6.is-readable-line-width .cm-content,
+  .markdown-source-view.mod-cm6.is-readable-line-width .cm-sizer {
+    max-width: 100%;
+    width: 100%;
+  }
+
+    /* Set inner content to line width */
+  .markdown-preview-view.is-readable-line-width .markdown-preview-sizer > div,
+  .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer > .cm-content > div,
+  .markdown-source-view.mod-cm6.is-readable-line-width .cm-sizer > .inline-title,
+  .markdown-source-view.mod-cm6.is-readable-line-width .cm-sizer > .embedded-backlinks,
+  .markdown-source-view.mod-cm6.is-readable-line-width .cm-sizer > .metadata-container  {
+    max-width: var(--max-width);
+    width: var(--line-width);
+    margin-inline: var(--content-margin) !important;
+  }
+  .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer > .cm-content {
+    >  *:not(div) {
+      max-width: var(--content-line-width);
+      margin-inline-start: var(--content-margin-start) !important;
+    }
+  }
+
   .markdown-source-view.mod-cm6.is-readable-line-width .cm-contentContainer.cm-contentContainer>.cm-content,
   .markdown-preview-view.is-readable-line-width .markdown-preview-sizer {
 
@@ -60,7 +100,6 @@ body.image-resizer {
     > div[alt~="5/6"] {
       --image-resizer-max-width: 83.33333333333333%;
     }
-
 
     /* Position */
     > div[alt~="center"] {

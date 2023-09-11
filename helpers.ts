@@ -2,10 +2,8 @@ export const debounce = <T extends (...args: any[]) => void>(
 	fn: T,
 	delay: number
 ) => {
-	console.log("deeeeee-----");
 	let timeoutID: ReturnType<typeof setTimeout> | undefined = undefined;
 	return (...args: Parameters<T>) => {
-		console.log("deeeeee-----timerId");
 		clearTimeout(timeoutID);
 		timeoutID = setTimeout(() => fn(...args), delay);
 	};
@@ -23,7 +21,6 @@ export const collectSizeArbitraryValues = (texts: string[]) => {
 
 		if (matchs) {
 			const [, , match] = matchs;
-			console.log("match", match);
 			match
 				.split(" ")
 				.map((m) => m.trim())
@@ -32,12 +29,6 @@ export const collectSizeArbitraryValues = (texts: string[]) => {
 					const arbitaryMatch = arbitaryValueRegex.exec(m);
 					if (arbitaryMatch) {
 						const [, value] = arbitaryMatch;
-
-						console.log(
-							"matchedArbitaryValues",
-							arbitaryValueRegex.exec(m),
-							value
-						);
 
 						matchedArbitaryValues.push(value);
 					}
